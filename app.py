@@ -1,5 +1,6 @@
 import pygame
 import random
+import sys
 
 # Define some colors
 BLACK = (0, 0, 0)
@@ -50,9 +51,12 @@ class Food(object):
         self.position = [random.randrange(1, 50) * 10, random.randrange(1, 50) * 10]
         self.isFoodOnScreen = True
 
-    def spawnFood(self):
+    def spawnFood(self, snake):
         if self.isFoodOnScreen == False:
-            self.position = [random.randrange(1, 50) * 10, random.randrange(1, 50) * 10]
+            while True:
+                self.position = [random.randrange(1, 50) * 10, random.randrange(1, 50) * 10]
+                if self.position not in snake.body:
+                    break
             self.isFoodOnScreen = True
         return self.position
 
@@ -75,6 +79,8 @@ def gameOver():
 
 while True:
     for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            gameOver()
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
                 snake.changeDirection("UP")
@@ -85,7 +91,7 @@ while True:
             if event.key == pygame.K_RIGHT:
                 snake.changeDirection("RIGHT")
 
-    foodPos = food.spawnFood()
+    foodPos = food.spawnFood(snake)
     if snake.move(foodPos) == 1:
         score += 1
         food.setFoodOnScreen(False)
@@ -104,4 +110,3 @@ while True:
     pygame.display.flip()
 
     fps.tick(24)
-    
